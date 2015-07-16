@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PUSH_BIND">
+    <select id="selectAllPushBinds" resultType="com.teradata.pushserver.bean.pushbind.BDPushBindBean">
+        SELECT
+            MOBILE AS USERNAME,
+            BAIDU_USER_ID,
+            BAIDU_CHANNEL_ID,
+            CLIENT_TYPE AS DEVICE_TYPE,
+            BIND_TIME,
+            RSRV_STR1,
+            RSRV_STR2,
+            RSRV_STR3
+        FROM
+            ${dbName}.KPI_MBL_BI_PUSH_BIND
+    ORDER BY
+          BIND_TIME
+        DESC
+    </select>
+
+    <select id="selectPushBindsByUser" resultType="com.teradata.pushserver.bean.pushbind.BDPushBindBean">
+        SELECT
+            MOBILE AS USERNAME,
+            BAIDU_USER_ID,
+            BAIDU_CHANNEL_ID,
+            CLIENT_TYPE AS DEVICE_TYPE,
+            BIND_TIME,
+            RSRV_STR1,
+            RSRV_STR2,
+            RSRV_STR3
+          FROM
+            ${dbName}.KPI_MBL_BI_PUSH_BIND
+         WHERE
+            MOBILE = #{USERNAME}
+      ORDER BY
+            BIND_TIME
+          DESC
+    </select>
+
+    <select id="selectPushBind" resultType="com.teradata.pushserver.bean.pushbind.BDPushBindBean">
+        SELECT
+            MOBILE AS USERNAME,
+            BAIDU_USER_ID,
+            BAIDU_CHANNEL_ID,
+            CLIENT_TYPE AS DEVICE_TYPE,
+            BIND_TIME,
+            RSRV_STR1,
+            RSRV_STR2,
+            RSRV_STR3
+        FROM
+            ${dbName}.KPI_MBL_BI_PUSH_BIND
+        WHERE BAIDU_USER_ID = #{BIND.baidu_user_id}
+          AND BAIDU_CHANNEL_ID = #{BIND.baidu_channel_id}
+    </select>
+
+    <insert id="insertPushBind">
+        INSERT
+          INTO ${dbName}.KPI_MBL_BI_PUSH_BIND(
+            MOBILE,
+            BAIDU_USER_ID,
+            BAIDU_CHANNEL_ID,
+            CLIENT_TYPE ,
+            BIND_TIME
+          )
+        VALUES (#{BIND.username}, #{BIND.baidu_user_id}, #{BIND.baidu_channel_id}, #{BIND.device_type}, DATE)
+    </insert>
+
+    <update id="updatePushBind">
+      UPDATE ${dbName}.KPI_MBL_BI_PUSH_BIND
+         SET
+          MOBILE = #{BIND.username},
+          BIND_TIME = DATE
+       WHERE
+          BAIDU_USER_ID = #{BIND.baidu_user_id}
+         AND
+          BAIDU_CHANNEL_ID = #{BIND.baidu_channel_id}
+    </update>
+
+    <delete id="deletePushBind">
+        DELETE
+          FROM
+            ${dbName}.KPI_MBL_BI_PUSH_BIND
+        WHERE
+            BAIDU_USER_ID = #{BIND.baidu_user_id}
+          AND
+            BAIDU_CHANNEL_ID = #{BIND.baidu_channel_id}
+    </delete>
+</mapper>

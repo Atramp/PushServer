@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>消息推送</title>
+    <link rel="stylesheet" href="css/bootstrap/v2/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap/icheck/blue.css"/>
+    <link rel="stylesheet" href="css/bootstrap/datetimepicker/bootstrap-datetimepicker.min.css"/>
+
+    <script type="text/javascript" src="js/jquery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery/bootstrap/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="js/jquery/bootstrap/bootstrap-icheck.min.js"></script>
+    <script type="text/javascript" src="js/mask/mask.js"></script>
+    <script type="text/javascript" src="js/mask/spin.min.js"></script>
+    <style>
+        fieldset {
+            margin-top: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        var msgType = "-1";
+        var clientType = "3";// 默认为Android
+        var users = null;
+        $(document).ready(function () {
+            $("#navTab1").click(function () {
+                $(".active").each(function () {
+                    $(this).attr("class", "");
+                });
+                $(this).attr("class", "active");
+                $("#titleInput").fadeOut();
+                $("#input-title").val("");
+                $("#editorArea").fadeOut();
+                $("#textArea").fadeIn();
+                msgType = "1";
+            });
+            $("#navTab2").click(function () {
+                $(".active").each(function () {
+                    $(this).attr("class", "");
+                });
+                $(this).attr("class", "active");
+                $("#titleInput").fadeIn();
+                $("#editorArea").fadeOut();
+                $("#textArea").fadeIn();
+                msgType = "2";
+            });
+            $("#navTab3").click(function () {
+                $(".active").each(function () {
+                    $(this).attr("class", "");
+                });
+                $(this).attr("class", "active");
+                $("#titleInput").fadeIn();
+                $("#editorArea").slideDown();
+                //$("#textArea").hide();
+                msgType = "3";
+            });
+
+            /**
+             * 使用iCheck
+             */
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+        });
+    </script>
+</head>
+<body style="width:100%;">
+<div class="container-fluid" style="width: 70%;">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="nav nav-tabs">
+                <li class="active" id="navTab1"><a href="javascript:void(0);">推送消息</a></li>
+                <li class="" id="navTab2"><a href="javascript:void(0);">推送通知</a></li>
+                <li class="" id="navTab3"><a href="javascript:void(0);">推送富媒体</a></li>
+            </ul>
+            <div class="row-fluid">
+                <div class="span12" style="">
+                    <form class="form-inline">
+                        <fieldset id="titleInput" style="display: none;">
+                            <label>通知标题：</label>
+                            <input id="input-title" type="text" type="margin-left: 4px;"/>
+                        </fieldset>
+                        <br/>
+                        <fieldset>
+                            <label style="vertical-align: top;">消息内容：</label>
+
+                            <div id="textArea" style="display:inline;">
+                                <textarea style="width:400px;height: 100px;" id="input-message"></textarea>
+                            </div>
+                            <div id="editorArea" style="display: none;margin-top: 10px;">
+                                <!--<iframe style="padding: 0;" frameborder="0" width="100%"
+                                        height="400px;" id="messageEditor" src="../editor/index.html"></iframe>
+                                -->
+                                <label>页面地址：</label>
+
+                                <div id="uploadDiv" style="display: inline-block;">
+                                    <div>
+                                        <input type="text" id="copyFile" placeholder="输入网址或上传文件"/>
+                                        <input type="file" name="upload" id="upload"
+                                               style="position:absolute;opacity:0;overflow: hidden;width:50px;"
+                                               onchange="document.getElementById('copyFile').value = this.files[0].name;"
+                                               accept="text/html"/>
+                                        <a href="javascript:void(0);" class="btn btn-fail">浏览</a>
+                                        <input id="button-upload" class="btn btn-success" type="button"
+                                               style="display:inline-block;margin-left:5px;" value="上传"/>
+                                        <a id="pre-url" style='margin-left:20px;display:none;' target='_blank' href="">上传成功，点击预览</a>
+                                    </div>
+                                </div>
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#button-upload").click(function () {
+                                            //$("#pre-url").hide();
+                                            var formData = new FormData();
+                                            formData.append("upfile", document.getElementById("upload").files[0]);
+                                            try {
+                                                $.ajax({
+                                                    url: '/TDMobileServer/servlet/uploadhtml',
+                                                    type: 'POST',
+                                                    data: formData,
+                                                    contentType: false, //必须
+                                                    processData: false, //必须
+                                                    success: function (response) {
+                                                        $("#pre-url").attr("href", response);
+                                                        $("#pre-url").slideDown();
+                                                    }
+                                                });
+                                            } catch (e) {
+                                                console.log(e);
+                                                hideMask();
+                                            }
+                                        });
+                                        $("#copyFile").focus(function () {
+                                            $("#pre-url").slideUp();
+                                        });
+                                        $("#copyFile").blur(function () {
+                                            var url = $("#copyFile").val().trim();
+                                            if (url && url.length > 4) {
+                                                if (url.substr(0, 4).toLowerCase() != "http") {
+                                                    url = "http://" + url;
+                                                }
+                                                $("#pre-url").attr("href", url);
+                                                $("#pre-url").slideDown();
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </fieldset>
+                        <br/>
+                        <fieldset>
+                            <label>选择用户：</label>
+                            <!--<input tabindex="3" type="radio" id="user-all" name="userRadio" checked>
+                            <label for="user-all">所有用户</label>
+
+                            <input tabindex="4" type="radio" id="user-special" name="userRadio"
+                                   style="margin-left: 20px;">
+                            <label for="user-special">指定用户</label>-->
+
+                            <a id="btn-select-user" href="#btn-select-user" role="button" class="btn btn-fail"
+                               style="width:50px;">选择用户</a>
+                        </fieldset>
+                        <script>
+                            /**
+                             * 用户范围，选择指定用户时，查询数据库中的百度绑定关系，呈现在页面供选择
+                             */
+                            $(document).ready(function () {
+                                //$("#user-special").on("ifChecked", function () {
+                                $("#btn-select-user").click(function(){
+
+                                    console.log("clicked");
+                                    showMask();
+                                    try {
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "servlet/pushBindServlet",
+                                            success: function (response) {
+                                                $("#userTable tbody").remove();
+                                                var users = response;
+                                                var tbody = document.createElement("tbody");
+                                                var trClick = function (e) {
+                                                    var curClass = e.currentTarget.getAttribute("class");
+                                                    e.currentTarget.setAttribute("class", curClass == "success" ? "" : "success");
+                                                }
+                                                $("#userTable").append(tbody);
+                                                for (var i = 0; i < users.length; i++) {
+                                                    var user = users[i];
+                                                    var tr = document.createElement("tr");
+                                                    tr.onclick = trClick;
+                                                    $("<td>".concat(i + 1).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["username"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["baidu_user_id"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["baidu_channel_id"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["device_type"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["bind_time"]).concat("</td>")).appendTo(tr);
+                                                    tbody.appendChild(tr);
+                                                }
+                                                $("#modal-backdrop").attr("class", "modal-backdrop fade in");
+                                                $("#modal-backdrop").css("z-index", "99");
+                                                $("#modal-container-294027").attr("class", "modal");
+                                                $("#modal-container-294027").css("z-index", "999");
+                                            },
+                                            complete: function () {
+                                                hideMask();
+                                            }
+                                        });
+                                    } catch (e) {
+                                        console.log(e);
+                                        hideMask();
+                                    }
+                                });
+                                $("#user-all").on("ifChecked", function () {
+                                    users = null;
+                                    $('#targetArea').fadeOut();
+                                });
+                            });
+                        </script>
+                        <br/>
+                        <fieldset>
+                            <label>终端类型：</label>
+                            <input tabindex="3" type="radio" id="ct-android" name="client-type-radio" checked>
+                            <label for="ct-android">ANDROID</label>
+
+                            <input tabindex="4" type="radio" id="ct-ios" name="client-type-radio"
+                                   style="margin-left: 20px;">
+                            <label for="ct-android">IOS</label>
+
+                            <div id="datapickerArea" style="display: none;" class="input-append date form_datetime">
+                                <input id="input-time" size="16" type="text" value="" readonly>
+                                <span class="add-on"><i class="icon-th"></i></span>
+                            </div>
+
+                            <script type="text/javascript">
+                                $("#ct-android").on("ifChecked", function () {
+                                    clientType = "3";
+                                });
+                                $("#ct-ios").on("ifChecked", function () {
+                                    clientType = "4";
+                                });
+                            </script>
+                        </fieldset>
+                    </form>
+                    <fieldset id="targetArea" style="display: none;">
+                        <label>推送对象：</label>
+                        <span style="color: #cccccc;" id="span-target">
+
+                        </span>
+                    </fieldset>
+                </div>
+            </div>
+            <br/>
+
+            <div class="row-fluid" style="padding-left: 10%;">
+                <a id="btn-send" href="#submit" role="button" class="btn btn-success"
+                   style="width:50px;">发送</a>
+                <a id="btn-cancel" href="#cancel" role="button" class="btn btn-fail"
+                   style="width:50px;">取消</a>
+                <script>
+                    $(document).ready(function () {
+                        $("#btn-send").click(function () {
+                            showMask();
+                            if (users != null && users.length == 0) {
+                                if (!confirm('未选择任何用户，点击【取消】放弃当前操作，点击【确定】推送全部用户。')) {
+                                    return;
+                                }
+                                users = null;
+                            }
+                            try {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "servlet/pushServlet",
+                                    async: true,
+                                    data: {
+                                        title: $("#input-title").val(),
+                                        message: $("#input-message").val(),
+                                        users: users == null ? '' : JSON.stringify(users),
+                                        url: $("#pre-url")[0].href,
+                                        type: msgType,
+                                        device_type: clientType,
+                                        send_time: $("#st-now").checked ? null : $("#send_time").val()
+                                    },
+                                    success: function () {
+                                        alert("推送成功");
+                                    },
+                                    complete: function () {
+                                        hideMask();
+                                    }
+                                });
+                            } catch (e) {
+                                console.log(e);
+                                hideMask();
+                            }
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="span12">
+                <div id="modal-backdrop" class=""></div>
+                <div id="modal-container-294027" class="modal fade" role="dialog" aria-labelledby="myModalLabel" style="width: auto;">
+                    <div class="modal-header">
+                        <h3 id="myModalLabel">
+                            <span onclick="">选择用户：</span>
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+                        <table id="userTable" class="table table-condensed table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>手机号码</th>
+                                <th>百度USER_ID</th>
+                                <th>百度CHANNEL_ID</th>
+                                <th>终端类型</th>
+                                <th>绑定时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" onclick="closeUserTableDiv()">关闭</button>
+                        <button class="btn btn-primary" onclick="closeUserTableDiv(true)">确定</button>
+                    </div>
+                    <script>
+                        var closeUserTableDiv = function (isConfirm) {
+                            $('#modal-container-294027').attr('class', 'modal fade');
+                            setTimeout(function () {
+                                $('#modal-container-294027').css('z-index', '-1')
+                            }, 500);
+                            $("#modal-backdrop").attr("class", "");
+                            $("#modal-backdrop").css("z-index", "-1");
+                            if (isConfirm) {
+                                users = new Array();
+                                var _users = new Array();
+                                $("table#userTable .success").each(function () {
+                                    var user = new Object();
+                                    user['username'] = this.children[1].innerHTML;
+                                    user['baidu_user_id'] = this.children[2].innerHTML;
+                                    user['baidu_channel_id'] = this.children[3].innerHTML;
+                                    users.push(user);
+                                    var _user = new Object();
+                                    _users.push(this.children[1].innerHTML);
+                                });
+                                if (_users.length > 0) {
+                                    $("#span-target").html(JSON.stringify(_users));
+                                } else {
+                                    $("#span-target").html('未选择任何用户！');
+                                }
+                                $("#targetArea").slideDown();
+                            }
+                        };
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
