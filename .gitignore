@@ -8,3 +8,4 @@
 # IDE Files#
 .DS_Store
 .idea
+web/WEB-INF/classes
