@@ -21,7 +21,7 @@
         INSERT INTO
             ${dbName}.KPI_MBL_BI_PUSH_MESSAGE (ID,MESSAGE_TYPE,MESSAGE_TITLE,DESCRIPTION,CONTENT,URL,CREATE_TIME)
         VALUES
-            (#{MESSAGE.id},#{MESSAGE.message_type},#{MESSAGE.message_title},#{MESSAGE.description},#{MESSAGE.customer_content},#{MESSAGE.url}, DATE())
+            (#{MESSAGE.id},#{MESSAGE.message_type},#{MESSAGE.message_title},#{MESSAGE.description},#{MESSAGE.customer_content},#{MESSAGE.url}, DATE)
     </insert>
 
     <select id="selectMessageByID" resultType="com.teradata.pushserver.bean.message.PushMessageBean">
@@ -66,7 +66,7 @@
         SET
             STATUS = #{STATUS}
         <if test="STATUS == 1">
-            , RECEIVE_TIME =  DATE()
+            , RECEIVE_TIME =  DATE
         </if>
         WHERE
             USERNAME = #{USERNAME}
@@ -78,7 +78,7 @@
         INSERT INTO
           ${dbName}.KPI_MBL_BI_PUSH_USER_MESSAGE (USERNAME, MESSAGE_ID, STATUS, PUSH_TIME)
         VALUES
-          (#{USER_MESSAGE.username}, #{USER_MESSAGE.id}, #{USER_MESSAGE.status}, DATE())
+          (#{USER_MESSAGE.username}, #{USER_MESSAGE.id}, #{USER_MESSAGE.status}, DATE)
     </select>
 
     <select id="insertMessageToAllUser">
@@ -88,7 +88,7 @@
            DISTINCT USERNAME,
             #{USER_MESSAGE.id}   AS MESSAGE_ID,
             #{USER_MESSAGE.status}   AS STATUS,
-            DATE()} AS PUSH_TIME
+            DATE} AS PUSH_TIME
           FROM #{dbName}.KPI_MBL_BI_PUSH_BIND
     </select>
 </mapper>

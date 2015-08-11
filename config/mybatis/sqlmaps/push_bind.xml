@@ -64,7 +64,7 @@
             CLIENT_TYPE ,
             BIND_TIME
           )
-        VALUES (#{BIND.username}, #{BIND.baidu_user_id}, #{BIND.baidu_channel_id}, #{BIND.device_type}, DATE())
+        VALUES (#{BIND.username}, #{BIND.baidu_user_id}, #{BIND.baidu_channel_id}, #{BIND.device_type}, DATE)
     </insert>
 
     <update id="updatePushBind">
