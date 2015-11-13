@@ -191,7 +191,7 @@
                                                     $("<td>".concat(i + 1).concat("</td>")).appendTo(tr);
                                                     $("<td>".concat(user["username"]).concat("</td>")).appendTo(tr);
                                                     $("<td>".concat(user["baidu_user_id"]).concat("</td>")).appendTo(tr);
-                                                    $("<td>".concat(user["baidu_channel_id"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["channelID"]).concat("</td>")).appendTo(tr);
                                                     $("<td>".concat(user["deviceType"]).concat("</td>")).appendTo(tr);
                                                     $("<td>".concat(user["bindTime"]).concat("</td>")).appendTo(tr);
                                                     tbody.appendChild(tr);
@@ -339,7 +339,7 @@
                                     var user = new Object();
                                     user['username'] = this.children[1].innerHTML;
                                     user['baidu_user_id'] = this.children[2].innerHTML;
-                                    user['baidu_channel_id'] = this.children[3].innerHTML;
+                                    user['channelID'] = this.children[3].innerHTML;
                                     users.push(user);
                                     var _user = new Object();
                                     _users.push(this.children[1].innerHTML);
