@@ -1,4 +1,4 @@
-package com.teradata.pushserver.dao.common;
+package com.teradata.common.dao;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -13,7 +13,7 @@ public abstract class AbstractCommonDao {
     protected class Param extends HashMap {
         public Param() {
             super();
-            put("dbName", "dwttemp");
+            put("dbName", "pushserver");
         }
     }
 
@@ -21,7 +21,7 @@ public abstract class AbstractCommonDao {
     private SqlSessionFactory sqlSessionFactory;
 
     protected SqlSession openSession() {
-        return sqlSessionFactory.openSession();
+        return sqlSessionFactory.openSession(true);
     }
 
     protected SqlSession openSession(boolean autoCommit) {

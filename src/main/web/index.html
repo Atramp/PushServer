@@ -192,8 +192,8 @@
                                                     $("<td>".concat(user["username"]).concat("</td>")).appendTo(tr);
                                                     $("<td>".concat(user["baidu_user_id"]).concat("</td>")).appendTo(tr);
                                                     $("<td>".concat(user["baidu_channel_id"]).concat("</td>")).appendTo(tr);
-                                                    $("<td>".concat(user["device_type"]).concat("</td>")).appendTo(tr);
-                                                    $("<td>".concat(user["bind_time"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["deviceType"]).concat("</td>")).appendTo(tr);
+                                                    $("<td>".concat(user["bindTime"]).concat("</td>")).appendTo(tr);
                                                     tbody.appendChild(tr);
                                                 }
                                                 $("#modal-backdrop").attr("class", "modal-backdrop fade in");
@@ -277,7 +277,7 @@
                                         users: users == null ? '' : JSON.stringify(users),
                                         url: $("#pre-url")[0].href,
                                         type: msgType,
-                                        device_type: clientType,
+                                        deviceType: clientType,
                                         send_time: $("#st-now").checked ? null : $("#send_time").val()
                                     },
                                     success: function () {

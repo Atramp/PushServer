@@ -1,4 +1,4 @@
-package com.teradata.pushserver.util;
+package com.teradata.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

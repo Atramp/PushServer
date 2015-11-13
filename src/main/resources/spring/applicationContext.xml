@@ -9,33 +9,24 @@
     <bean id="pushMessageService" class="com.teradata.pushserver.service.BDPushMessageService"/><!--推送消息相关业务逻辑-->
     <bean id="pushService" class="com.teradata.pushserver.service.BDPushService"/><!--推送相关业务逻辑-->
 
-
     <!--dao配置-->
     <bean id="pushBindDao" class="com.teradata.pushserver.dao.BDPushBindDao"/>
     <bean id="pushMessageDao" class="com.teradata.pushserver.dao.BDPushMessageDao"/>
-
-    <!----><bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
-        <property name="driver" value="com.ncr.teradata.TeraDriver" />
-        <property name="url" value="jdbc:teradata://10.248.15.15/CLIENT_CHARSET=cp936,TMODE=TERA,CHARSET=ASCII,DATABASE=DWPPARA" />
-        <property name="username" value="dwap" />
-        <property name="password" value="Xtj23i1tpyT" />
-        <property name="poolMaximumActiveConnections" value="10" />
-        <property name="poolMaximumIdleConnections" value="5" />
-    </bean>
-     <!--<bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
+    <bean id="pushLogDao" class="com.teradata.pushserver.dao.interfaces.PushLogDao"/>
+     <bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
          <property name="driver" value="com.mysql.jdbc.Driver" />
-         <property name="url" value="jdbc:mysql://localhost:3307/dwttemp" />
+         <property name="url" value="jdbc:mysql://192.168.31.161:3306/pushserver" />
          <property name="username" value="root" />
-         <property name="password" value="Liusp2014" />
+         <property name="password" value="mbi187" />
          <property name="poolMaximumActiveConnections" value="1" />
          <property name="poolMaximumIdleConnections" value="1" />
-     </bean>-->
+     </bean><!---->
 
      <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" >
         <property name="dataSource" ref="dataSource" />
         <!-- 自动扫描mapping.xml文件 -->
-        <property name="mapperLocations" value="classpath:mybatis/sqlmaps/*.xml"></property>
+        <property name="mapperLocations" value="classpath:sqlmaps/*.xml"></property>
 
     </bean>
 

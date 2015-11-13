@@ -14,7 +14,7 @@
             RSRV_STR2,
             RSRV_STR3
         FROM
-            ${dbName}.KPI_MBL_BI_PUSH_BIND
+            ${dbName}.USER
     ORDER BY
           BIND_TIME
         DESC
@@ -31,7 +31,7 @@
             RSRV_STR2,
             RSRV_STR3
           FROM
-            ${dbName}.KPI_MBL_BI_PUSH_BIND
+            ${dbName}.USER
          WHERE
             MOBILE = #{USERNAME}
       ORDER BY
@@ -50,28 +50,28 @@
             RSRV_STR2,
             RSRV_STR3
         FROM
-            ${dbName}.KPI_MBL_BI_PUSH_BIND
+            ${dbName}.USER
         WHERE BAIDU_USER_ID = #{BIND.baidu_user_id}
           AND BAIDU_CHANNEL_ID = #{BIND.baidu_channel_id}
     </select>
 
     <insert id="insertPushBind">
         INSERT
-          INTO ${dbName}.KPI_MBL_BI_PUSH_BIND(
+          INTO ${dbName}.USER(
             MOBILE,
             BAIDU_USER_ID,
             BAIDU_CHANNEL_ID,
             CLIENT_TYPE ,
             BIND_TIME
           )
-        VALUES (#{BIND.username}, #{BIND.baidu_user_id}, #{BIND.baidu_channel_id}, #{BIND.device_type}, DATE)
+        VALUES (#{BIND.username}, #{BIND.baidu_user_id}, #{BIND.baidu_channel_id}, #{BIND.deviceType}, now())
     </insert>
 
     <update id="updatePushBind">
-      UPDATE ${dbName}.KPI_MBL_BI_PUSH_BIND
+      UPDATE ${dbName}.USER
          SET
           MOBILE = #{BIND.username},
-          BIND_TIME = DATE
+          BIND_TIME = now()
        WHERE
           BAIDU_USER_ID = #{BIND.baidu_user_id}
          AND
@@ -81,7 +81,7 @@
     <delete id="deletePushBind">
         DELETE
           FROM
-            ${dbName}.KPI_MBL_BI_PUSH_BIND
+            ${dbName}.USER
         WHERE
             BAIDU_USER_ID = #{BIND.baidu_user_id}
           AND

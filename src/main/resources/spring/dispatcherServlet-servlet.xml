@@ -13,7 +13,7 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <context:component-scan base-package="com.teradata.pushserver.controller" />
+    <context:component-scan base-package="com.teradata.pushserver.controller"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
 
@@ -24,4 +24,6 @@
             </list>
         </property>
     </bean>
+
+    <bean class="com.teradata.common.spring.GenericExceptionHandler"/>
 </beans>
