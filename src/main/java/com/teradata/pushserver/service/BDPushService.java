@@ -20,6 +20,8 @@ import com.teradata.pushserver.controller.PushController;
 import com.teradata.pushserver.dao.interfaces.PushLogDao;
 import com.teradata.pushserver.service.interfaces.PushBindService;
 import com.teradata.pushserver.service.interfaces.PushService;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +35,7 @@ import java.util.*;
 public class BDPushService extends AbstractTransactionService implements PushService<BDPushMessage> {
     private static Log logger = LogFactory.getLog(BDPushService.class);
 
-    private final Map<String, BaiduPushClient> clients = new HashMap();
+    private final MultiKeyMap clients = MultiKeyMap.decorate(new HashedMap());
 
     @Autowired
     private PushLogDao pushLogDao;
@@ -41,7 +43,7 @@ public class BDPushService extends AbstractTransactionService implements PushSer
     @Autowired
     private PushBindService<BDPushBind> pushBindService;
 
-    private BaiduPushClient getClient(String appID) {
+    private BaiduPushClient getClient(String appID, String deviceType) {
         if (clients.isEmpty())
             synchronized (clients) {
                 if (clients.isEmpty()) {
@@ -56,12 +58,13 @@ public class BDPushService extends AbstractTransactionService implements PushSer
                                     logger.info(event.getMessage());
                                 }
                             });
-                            clients.put(StringUtils.substringAfterLast(entry.getKey().toString(), "_"), client);
+                            String[] keys = entry.getKey().toString().split("_");
+                            clients.put(keys[2], keys.length == 4 ? keys[3] : null, client);
                         }
                     }
                 }
             }
-        return clients.get(appID);
+        return (BaiduPushClient) clients.get(appID, deviceType);
     }
 
 
@@ -70,7 +73,7 @@ public class BDPushService extends AbstractTransactionService implements PushSer
         String appID = PushController.appID.get();
         if (StringUtils.isEmpty(appID))
             return false;
-        BaiduPushClient baiduPushClient = getClient(appID);
+        BaiduPushClient baiduPushClient = getClient(appID, deviceType);
         PushMsgToAllRequest request = new PushMsgToAllRequest();
         request.setMessageType(message.getMessageType());
         request.setMessage(message.generate());
@@ -107,7 +110,6 @@ public class BDPushService extends AbstractTransactionService implements PushSer
         String appID = PushController.appID.get();
         if (StringUtils.isEmpty(appID))
             return false;
-        BaiduPushClient baiduPushClient = getClient(appID);
         PushMsgToSingleDeviceRequest request = new PushMsgToSingleDeviceRequest();
         request.setMessageType(message.getMessageType());
         for (BDPushBind bind : binds) {
@@ -120,6 +122,7 @@ public class BDPushService extends AbstractTransactionService implements PushSer
             request.setDeviceType(bind.getDeviceType());
             PushLog pushLog = new PushLog(appID, message.getMessageType(), bind.getRemoteUserID(), message.generate());
             try {
+                BaiduPushClient baiduPushClient = getClient(appID, String.valueOf(bind.getDeviceType()));
                 PushMsgToSingleDeviceResponse response = baiduPushClient.pushMsgToSingleDevice(request);
                 pushLog.setMsgID(response.getMsgId());
                 pushLog.setResult(PushLog.RESULT.SUCCESS);

@@ -28,7 +28,7 @@ public class BDPushNotification extends BDPushMessage {
     }
 
     public void setOpenType(String openType) {
-        data.put("open_type", StringUtils.defaultString(openType, "3"));
+        data.put("open_type", Integer.parseInt(StringUtils.defaultString(openType, "3")));
     }
 
     public void setUrl(String url) {
